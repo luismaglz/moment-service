@@ -1,1 +1,10 @@
 <hello name="{{ name }}"></hello>
+<!-- Render single calendar -->
+<div class="month" *ngFor="let month of (today | getTwelveMonthsAhead)">
+    <div class="month-name">{{ month | date : 'MMM y'}}</div>
+    <div class="weeks">
+        <div class="week" *ngFor="let week of (month | getMonthWeeks)">
+            <div class="day" *ngFor="let day of week">{{day | date:'dd'}}</div>
+        </div>
+    </div>
+</div>

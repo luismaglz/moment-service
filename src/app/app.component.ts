@@ -8,7 +8,7 @@ import { MomentLocaleService } from './moment-locale.service';
 })
 export class AppComponent  {
   name = 'Angular';
-
+  today = new Date();
   constructor(protected momentLocaleService: MomentLocaleService){
     (window as any).momentLocaleService = momentLocaleService;
   }
