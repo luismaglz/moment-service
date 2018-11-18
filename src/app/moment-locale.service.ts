@@ -22,11 +22,11 @@ export class MomentLocaleService {
   constructor() {
     this.locale = this.defaultCulture;
     this.momentLocaleData = moment.localeData(this.defaultCulture);
-    this.longDaysOfWeek = new BehaviorSubject<string[]>(this.momentLocaleData.months());
-    this.shortDaysOfWeek = new BehaviorSubject<string[]>(this.momentLocaleData.monthsShort());
-    this.narrowDaysOfWeek = new BehaviorSubject<string[]>(this.momentLocaleData.weekdays());
-    this.longMonths = new BehaviorSubject<string[]>(this.momentLocaleData.weekdaysShort());
-    this.shortMonths = new BehaviorSubject<string[]>(this.momentLocaleData.weekdaysMin());
+    this.longDaysOfWeek = new BehaviorSubject<string[]>(this.momentLocaleData.weekdays());
+    this.shortDaysOfWeek = new BehaviorSubject<string[]>(this.momentLocaleData.weekdaysShort());
+    this.narrowDaysOfWeek = new BehaviorSubject<string[]>(this.momentLocaleData.weekdaysMin());
+    this.longMonths = new BehaviorSubject<string[]>(this.momentLocaleData.months());
+    this.shortMonths = new BehaviorSubject<string[]>(this.momentLocaleData.monthsShort());
   }
 
   /**
@@ -86,23 +86,5 @@ export class MomentLocaleService {
       valuesArray[i] = valueFunction(i);
     }
     return valuesArray;
-  }
-
-  protected createDate(year: number, month: number, date: number, locale: string): Moment {
-    // Moment.js will create an invalid date if any of the components are out of bounds, but we
-    // explicitly check each case so we can throw more descriptive errors.
-    if (month < 0 || month > 11) {
-      throw Error(`Invalid month index "${month}". Month index has to be between 0 and 11.`);
-    }
-
-    if (date < 1) {
-      throw Error(`Invalid date "${date}". Date has to be greater than 0.`);
-    }
-    const result = moment.utc({ year, month, date }).locale(locale);
-    // If the result isn't valid, the date must have been out of bounds for this month.
-    if (!result.isValid()) {
-      throw Error(`Invalid date "${date}" for month with index "${month}".`);
-    }
-    return result;
   }
 }

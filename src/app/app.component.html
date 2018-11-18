@@ -2,6 +2,9 @@
 <!-- Render single calendar -->
 <div class="month" *ngFor="let month of (today | getTwelveMonthsAhead)">
     <div class="month-name">{{ month | date : 'MMM y'}}</div>
+    <div class="week-days">
+        <div class="week-day" *ngFor="let weekday of weekdays | async">{{weekday}}</div>
+    </div>
     <div class="weeks">
         <div class="week" *ngFor="let week of (month | getMonthWeeks)">
             <div class="day" *ngFor="let day of week">{{day | date:'dd'}}</div>

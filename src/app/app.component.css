@@ -10,6 +10,19 @@ p {
     box-sizing: border-box;
 }
 
+.week-days{
+    display: flex;
+    flex-direction: row;
+}
+
+.week-day {
+    height: 40px;
+    width: 40px; 
+    box-sizing: border-box;
+    display: inline-flex;
+    justify-content: center;
+}
+
 .week {
     display: flex;
     flex-direction: row;
@@ -28,4 +41,9 @@ p {
     margin-lefT:20px;
     display: inline-flex;
     flex-direction: column;
+}
+
+.month-name{
+    justify-content: center;
+    display: flex;
 }
