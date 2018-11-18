@@ -4,8 +4,6 @@ import { Moment } from 'moment';
 import 'moment/locale/es';
 import { BehaviorSubject } from 'rxjs';
 
-const DEFAULT_CULTURE_TOKEN = new InjectionToken<string>('DefaultCulture');
-const injector = Injector.create({providers: [{provide: DEFAULT_CULTURE_TOKEN, useValue: 'en'}]});
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +11,7 @@ const injector = Injector.create({providers: [{provide: DEFAULT_CULTURE_TOKEN, u
 export class MomentLocaleService {
   protected locale:string;
   protected momentLocaleData: moment.Locale;
+  protected defaultCulture: string = 'en';
 
   longDaysOfWeek:BehaviorSubject<string[]>;
   shortDaysOfWeek:BehaviorSubject<string[]>;
@@ -20,9 +19,9 @@ export class MomentLocaleService {
   longMonths:BehaviorSubject<string[]>;
   shortMonths:BehaviorSubject<string[]>;
   
-  constructor(@Inject(DEFAULT_CULTURE_TOKEN) protected defaultCulture:string) {
-    this.locale = defaultCulture;
-    this.momentLocaleData = moment.localeData(defaultCulture);
+  constructor() {
+    this.locale = this.defaultCulture;
+    this.momentLocaleData = moment.localeData(this.defaultCulture);
     this.longDaysOfWeek = new BehaviorSubject<string[]>(this.momentLocaleData.months());
     this.shortDaysOfWeek = new BehaviorSubject<string[]>(this.momentLocaleData.monthsShort());
     this.narrowDaysOfWeek = new BehaviorSubject<string[]>(this.momentLocaleData.weekdays());
@@ -38,15 +37,41 @@ export class MomentLocaleService {
   public getMonthDates(month:number, year:number): Date[]{
     const properties = {
       year, 
-      month, 
-      date:2
+      month
     }
-    const endOfMonth = moment.utc(properties).locale(this.locale).endOf('month').date();
-    return this.range(endOfMonth, (i) => this.createDate(year, month, i + 1, this.locale).toDate());
+    const endOfMonth = moment(properties).locale(this.locale).endOf('month').date();
+    const dates = [];
+    for(let day = 1; day <= endOfMonth; day++){
+      dates.push(new Date(year, month, day))
+    }
+    return dates;
   }
 
+  public getMonthWeeks(month:number, year:number): Date[][]{
+    const weeks = [];
+    this.getMonthDates(month, year).reduce((week, day, index, array) => {
+      week.push(day);
 
-  protected updateDateLabels(locale:string) {
+      if(day.getDay() === 6 || index === array.length - 1){
+        weeks.push(week);
+        return [];
+      }
+      return week;
+    }, [])
+    return weeks;
+  };
+
+  public getMonthsAhead(month: number, year:number, numberOfMonths: number): Date[]{
+    const months = [];
+    for(let x = 0; x < numberOfMonths; x++){
+      const date = new Date(year, month, 2);
+      date.setMonth(date.getMonth() + x);
+      months.push(date);
+    }
+    return months;
+  }
+
+  protected updateDateLabels() {
     this.longMonths.next(this.momentLocaleData.months());
     this.shortMonths.next(this.momentLocaleData.monthsShort());
     this.longDaysOfWeek.next(this.momentLocaleData.weekdays());
